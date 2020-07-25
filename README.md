@@ -1,1 +1,1 @@
-
+StockExchange is a Java Spring boot application build using MVC Framework. StockExchange application uses AlphaVantage API to obtain historical and real-time stock related data. StockExchange Application allows user to test their trading skills in simulated Stock Market.
