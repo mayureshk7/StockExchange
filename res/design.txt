@@ -1,0 +1,200 @@
+===============
+ DESIGN-README
+===============
+
+The Stock Exchange program is implemented using an MVC Architecture. 
+In which, Model is well defined to perform processing tasks. Controller is responsible for 
+communicating betweeen the model and the view. View is responsible for displaying 
+the results and interact with the user.
+
+A package stock exchange is created, which contains three more packages, controller, model, view.
+
+***********************************************************************************************************************************************************************
+
+=======
+ Model
+=======
+StockExchangeModel is responsible for maintaining number of portofolios. As a single user can create 
+multiple portfolios, our StockExchangeModel allows creating and removing new portfolios.
+StockExchangeModel has an API to switch between different portfolios.
+On each portfolio, Model allows us to do certain operations such as:
+1. Display Share details of particular company on particular day
+2. Buy shares of displayed company
+3. Sell all or partial shares of the company which was bought on certain date
+4. Display all the details of portfolio including profit
+As the model uses internet based API, model throws an exception when it receives an query for which 
+data is not fetchable. Model is also well defined to throw an exception when incorrect/invalid 
+input is recevied.
+
+-->	It comprises of the IStockExchangeModelInterface.This interface provides all the methods and operations that
+	can be performed to create and edit a portfolio.
+
+-->	This interface is extended by StockExchange model that implements all of these methods.
+	The porfolios being created are stored in a HashMap.
+	
+-->	The model comprises of two more other classes Portfolio, Share.
+	The Portfolio class calculates the Cost basis and value of the shares in it, using the methods of the Share class.
+	The Shares in the portfolio are being stored in a HashMap.
+	However, when a share of the existing company is bought, on a different date, that share entry is stored in the linked list.
+_______________________
+
+ITERATION 1(Stock++)
+_______________________
+
+--> 	The exisitng IStockExchangeModel Interface has been extended by a new interface called the IStockExchangeExtendedModel Interface which 
+	has the new methods to support the additional features (Open-Closed Principle), requested in Stock++.
+	- setCommission
+	- retrive portfolio details on a given specific date
+	- get the current cost Basis 
+	- get cost basis on a particular date
+	- invest a fixed amount to a portfolio, on a specific date
+	- invest a fixed amount to a portfolio, with weights, on a specific date and 
+	- Also the capability to invest regularly (regular investment plan)
+
+-->	Therefore the new interface now has all the available methods (old and new) and operations that
+	can be performed to create and edit a portfolio and hence the IstockExchangeModel class now implements the IStockExchangeExtendedModel instead of 
+	IStockExchangeModel.
+
+-->	To support and make the above new features functional, the portfolio class has been added with few more methods 
+	- get state (for portfolio details)
+	- get state on a date (for portfolio details)
+	- get current cost basis
+	- get cost basis on a date and
+	- Also methods to support the support the investing amount to an existing portfolio
+
+-->	A major implementation change has been accommodated in the way the stocks are being queried.
+	In the previos version, everytime a stock was requested, the API was queried to fetch its details.
+	However, in this iteration of Stock++ everytime a new stock is requested, the API is queried only for 
+	the that first time and the data is then stored to a file on the local machine. It is this file that is being queried for all the following requests 
+	for the same stock and not the API.
+
+--> 	Similarly the Shares class has also been updated with few new methods that support the above mentioned features.
+
+--> 	Rest all the implementation details stay as it is.
+
+_______________________
+
+ITERATION 2(GStocks)
+_______________________
+
+-->	The exisitng IStockExchangeExtendedModel Interface has been extended by a new interface called the IStockExchangeGUIExtendedModel Interface which 
+	has the new methods to support the additional features (Open-Closed Principle), requested in GStock.
+	- save portfolio to a file
+		It stores the data in the following format
+		> Cost Basis
+		> Total Profit
+		> Total commission
+		> Each Commission
+		-----------------
+		it stores the transaction details in the file in the follwoing format
+		> Ticker Symbol   BuyingPrice(End Day Price)    NoOfShares    Date    Commission
+		-----------------
+		after the "END" it displays the status of the current portfolio(status at that particular point in time), in the following format
+ 		> Ticker Symbol   BuyingPrice(End Day Price)    NoOfShares    Date    Commission
+
+	- retrive portfolio from a file
+	- save investment strategy to a file
+	- retrive the investment strategy 
+
+-->	Therefore the new interface now has all the available methods (old and new) and operations that
+	can be performed to create and edit a portfolio and hence the IstockExchangeModel class now implements the IStockExchangeGUIExtendedModel instead of 
+	IStockExchangeExtendedModel.
+
+-->	To support and make the above new features functional, the portfolio class has been added with few more methods.
+	- save portfolio to a file
+	- retrive portfolio form a file
+	- save investment strategy
+	- retrive the investment strategy
+
+-->	To support the saving and retriving of the Investment plan strategy, a new class has been added, called InvestmentPlans.
+	This class stores the details of the current investment plan.
+
+-->	To keep open the posibility of using other APIs and data sources in the future, another new interface has been added called the
+	WebBasedAPI which has the getDta method. Therefore another new class called the AlphaVantageAPI has been added.
+	This class implements the getData method of the WebBasedAPI and using that method that retrives the data from the API. The portfolio uses the 
+	this method to retrive the share data.
+	In future any new API can implement this interface and thus fetch the details of shares using the getData method.
+
+-->	Rest all the implementation details stay as it is.
+
+***********************************************************************************************************************************************************************
+
+============
+ Controller 
+============
+StockExchangeController is responsible for communicating between the model and the view. 
+Controller receives an input from the view and it calls appropriate methods of the model based on
+these inputs. 
+Controller is well defined to catch an exceptions coming from the model and display appropriate 
+messages using views.
+Controller provides run method which is responsible for doing these operations.
+
+-->	It comprises of IStockExchangeController interface and a run method to check if the model and the view are 
+	working correctly.
+
+-->	A class StockExchangeController extends this above mentioned interface and implements its method to ensure the 
+	proper functioning of view and the model.
+_______________________
+
+ITERATION 1(Stock++)
+_______________________
+
+-->	The controller has been refactored and updated with the code that checks and includes also the new methods of the model are working fine along 
+	with the view.
+
+--> 	Rest all the implementation details stay as it is.
+
+
+_______________________
+
+ITERATION 2(GStocks)
+_______________________
+
+--> 	A new controller StockExchangeGUIController has been added to the controller package.
+	This controller implements the existing IStockExchangeController Interface and also ActionListener interface and checks that all the methods of 
+	the model are working fine with the Graphical User Interface View.
+
+-->	Rest all the implementation details stay same.
+
+
+***********************************************************************************************************************************************************************
+
+======
+ View
+======
+View is responsible for displaying the results and appropriate messages to the user.
+View communicates with the model via controller.
+
+-->	It comprises of IStockExchangeView interface having methods to be implemented for StockExchangeView.
+
+-->	A class StockExchangeStockExchangeViewiew extends this above mentioned interface and implements its method to ensure the 
+	proper messages are being dispayed on the view.
+_______________________
+
+ITERATION 1(Stock++)
+_______________________
+
+-->	Since the view already had an interface with the methods available to implement the console based user interafce,
+	there are no specific changes accommodated here. 
+
+
+_______________________
+
+ITERATION 2(GStocks)
+_______________________
+
+-->	A new interface, IStockExchangeGUIView has been created which implements the existing IStockExchangeView.
+	This interface has al the methods that support the creation of view for raphical User Interface.
+
+-->	A new class StockExchangeGraphicalView implements the IStockExchangeView interface and implmenets its 
+	methods to ensure the proper messages are beig displayed on the GUI view.
+
+***********************************************************************************************************************************************************************
+
+======
+
+There is also a main class, which has the main method.
+
+=====
+ END
+=====
